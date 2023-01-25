@@ -2,3 +2,6 @@
 
 # Auth file
 auth.txt
+
+# Locally stored database
+pareto-hockey-cache.db
