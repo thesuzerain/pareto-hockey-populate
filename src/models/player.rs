@@ -1,17 +1,23 @@
-use serde::Serialize;
-use chrono::{self, Utc};
+use serde::{Serialize, Deserialize};
+use super::position::Position;
 
-#[derive(Serialize, PartialEq, PartialOrd, Clone)]
+// Player
+// EP-API schema representing: 
+// - a given player
+#[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone, Debug)]
+#[serde(rename_all (deserialize = "camelCase"))]
 pub struct Player {
+
     pub id : u32,
-    pub draft_age : u32,
-    pub draft_year : u32,
-    pub player_name : String,
-    
-    pub nhl_career_ppg : f32,
 
+    pub name : Option<String>,
+    pub position : Option<Position>,
+    pub first_name : Option<String>,
+    pub last_name : Option<String>,
 
-    #[serde(with = "ts_seconds_option")]
-    pub date_of_birth : chrono::DateTime<Utc>,
+    pub draft_age : Option<u32>,
+    pub draft_year : Option<u32>,
+
+    pub date_of_birth : Option<String> // some dates on API are improperly formatted
 
 }

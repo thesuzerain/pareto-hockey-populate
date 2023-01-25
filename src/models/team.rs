@@ -1,8 +1,12 @@
 
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
-#[derive(Serialize,PartialEq,PartialOrd,Clone)]
+// Team
+// EP-API schema representing: 
+// - a given team
+#[derive(Serialize,Deserialize,PartialEq,PartialOrd,Clone, Debug)]
+#[serde(rename_all (deserialize = "camelCase"))]
 pub struct Team {
     pub id : u32,
-    pub team_name : String
+    pub name : String
 }

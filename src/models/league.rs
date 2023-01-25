@@ -1,8 +1,11 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
-
-#[derive(Serialize, PartialEq, PartialOrd)]
+// League
+// EP-API schema representing: 
+// - a team's League that they play in for a given season
+#[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone)]
+#[serde(rename_all (deserialize = "camelCase"))]
 pub struct League {
     pub slug : String,
-    pub tier : u32
+    pub name : String
 }
