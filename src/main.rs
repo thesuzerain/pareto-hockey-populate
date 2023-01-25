@@ -1,3 +1,5 @@
+use pareto_hockey_populate::fetch_draft_selections;
+use pareto_hockey_populate::fetch_game_logs;
 use pareto_hockey_populate::fetch_players;
 use pareto_hockey_populate::fetch_player_season;
 use pareto_hockey_populate::fetch_team_season;
@@ -18,6 +20,15 @@ async fn main() {
     // TODO: do an early check of auth key.
 
     // (TODO: remove unwraps from demo fetches)
+
+    // Fetch draft selections from EP-API
+    let draft_selections = fetch_draft_selections().await.unwrap();
+    dbg!(draft_selections.len());
+    
+    // Fetch game logs from EP-API
+    let game_logs = fetch_game_logs().await.unwrap();
+    dbg!(game_logs.len());
+    
     // Fetch player seasons from EP-API
     let player_seasons = fetch_player_season().await.unwrap();
     dbg!(player_seasons.len());
@@ -29,6 +40,8 @@ async fn main() {
     // Fetch player information from EP-API
     let players = fetch_players().await.unwrap();
     dbg!(players.len());
+
+
 
     // TODO: store fetched records locally.    
 }

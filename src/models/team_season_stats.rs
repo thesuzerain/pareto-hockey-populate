@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 // TeamSeasonStats
 // EP-API schema representing: 
-// - statistics for a certain team's performance, during a certain season
+// - aggregate statistics for a certain team's performance, during a certain season
 #[derive(Serialize, Deserialize,PartialEq, PartialOrd, Clone, Debug)]
 #[serde(rename_all (deserialize = "camelCase"))]
 pub struct TeamSeasonStats {

@@ -1,7 +1,8 @@
-use models::{player_season::PlayerSeason, team_season::TeamSeason, player::Player};
+use models::{player_season::PlayerSeason, team_season::TeamSeason, player::Player, draft_selection::DraftSelection, game_log::GameLog};
 use request::rest;
 
 mod models;
+// mod database;
 mod request;
 
 // pareto-hockey-populate
@@ -26,4 +27,14 @@ pub async fn fetch_player_season() -> Result<Vec<PlayerSeason>, reqwest::Error> 
 // Fetches Vec of all 'TeamSeason' objects from EP-API
 pub async fn fetch_team_season() -> Result<Vec<TeamSeason>, reqwest::Error> {
     Ok(rest::get_all::<TeamSeason>("team-stats").await?)
+}
+
+// Fetches Vec of all 'DraftSelection' objects from EP-API
+pub async fn fetch_draft_selections() -> Result<Vec<DraftSelection>, reqwest::Error> {
+    Ok(rest::get_all::<DraftSelection>("draft-selections").await?)
+}
+
+// Fetches Vec of all 'GameLog' objects from EP-API
+pub async fn fetch_game_logs() -> Result<Vec<GameLog>, reqwest::Error> {
+    Ok(rest::get_all::<GameLog>("game-logs").await?)
 }
