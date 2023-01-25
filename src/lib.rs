@@ -1,8 +1,9 @@
-use models::{player_season::PlayerSeason, team_season::TeamSeason, player::Player, draft_selection::DraftSelection, game_log::GameLog};
+use database::{connect, models::league_record::LeagueRecord};
+use models::{player_season::PlayerSeason, team_season::TeamSeason, player::Player, draft_selection::{DraftSelection, self}, game_log::GameLog, league::League, team::Team};
 use request::rest;
 
 mod models;
-// mod database;
+mod database;
 mod request;
 
 // pareto-hockey-populate
@@ -13,6 +14,31 @@ mod request;
 
 // Auth file containing apiKey (stored locally, do not push to Git)
 pub const AUTH_FILE_LOCATION : &'static str = "auth.txt";
+
+pub fn connect_database() -> rusqlite::Result<()> {
+    database::connect::connect()
+}
+
+pub fn populate_leagues(leagues : Vec<League>) -> rusqlite::Result<()> {
+    database::populate::populate_leagues(leagues)
+}
+
+pub fn populate_players(players : Vec<Player>, draft_selections : Vec<DraftSelection>) -> rusqlite::Result<()> {
+    database::populate::populate_players(players, draft_selections)
+}
+
+pub fn populate_player_seasons(player_season : Vec<PlayerSeason>) -> rusqlite::Result<()> {
+    database::populate::populate_player_seasons(player_season)
+}
+
+pub fn populate_teams(teams : Vec<Team>) -> rusqlite::Result<()> {
+    database::populate::populate_teams(teams)
+}
+
+pub fn populate_team_seasons(teams_seasons : Vec<TeamSeason>) -> rusqlite::Result<()> {
+    database::populate::populate_team_seasons(teams_seasons)
+}
+
 
 // Fetches Vec of all 'Player' objects from EP-API
 pub async fn fetch_players() -> Result<Vec<Player>, reqwest::Error> {
@@ -38,3 +64,9 @@ pub async fn fetch_draft_selections() -> Result<Vec<DraftSelection>, reqwest::Er
 pub async fn fetch_game_logs() -> Result<Vec<GameLog>, reqwest::Error> {
     Ok(rest::get_all::<GameLog>("game-logs").await?)
 }
+
+// Fetches Vec of all 'GameLog' objects from EP-API
+pub async fn fetch_leagues() -> Result<Vec<League>, reqwest::Error> {
+    Ok(rest::get_all::<League>("leagues").await?)
+}
+
