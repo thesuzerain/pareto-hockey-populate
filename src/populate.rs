@@ -1,7 +1,6 @@
 use futures::future::join_all;
-use serde::{Deserialize, de::DeserializeOwned};
-
-use crate::{request::fetch::{self, fetch_leagues}, database::{self, insert}, models::{league::League, player::Player, draft_selection::DraftSelection, player_season::PlayerSeason, team::Team, team_season::TeamSeason}};
+use serde::{de::DeserializeOwned};
+use crate::{request::fetch, database};
 
 // populate_leagues
 // Iteratively fetches all 'league' information from EP-API, converts it to LeagueRecords,

@@ -1,5 +1,3 @@
-use database::{connect, models::league_record::LeagueRecord};
-use models::{player_season::PlayerSeason, team_season::TeamSeason, player::Player, draft_selection::{DraftSelection, self}, game_log::GameLog, league::League, team::Team};
 use request::rest;
 
 mod models;

@@ -140,7 +140,7 @@ pub fn insert_leagues(leagues: Vec<league::League>) -> rusqlite::Result<()>{
 //          batch_params!(record_1_v1,record_1_v2),
 //          batch_params!(record_2_v1,record_2_v2),
 //        ]
-pub fn batch_insert_query(base_query : &str, mut values : Vec<Vec<&dyn ToSql>>) -> rusqlite::Result<()> {
+pub fn batch_insert_query(base_query : &str, values : Vec<Vec<&dyn ToSql>>) -> rusqlite::Result<()> {
 
     // Ensure batch has at least 1 record
     let num_records = values.len();

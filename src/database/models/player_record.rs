@@ -1,6 +1,4 @@
-use chrono::{NaiveDate, Datelike};
-
-use crate::models::{position::Position, draft_selection};
+use crate::models::{position::Position};
 
 // PlayerRecord
 // Pareto schema representing: 
