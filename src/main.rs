@@ -1,9 +1,9 @@
-use pareto_hockey_populate::fetch_draft_selections;
-use pareto_hockey_populate::fetch_game_logs;
-use pareto_hockey_populate::fetch_leagues;
-use pareto_hockey_populate::fetch_players;
-use pareto_hockey_populate::fetch_player_season;
-use pareto_hockey_populate::fetch_team_season;
+// use pareto_hockey_populate::fetch_draft_selections;
+// use pareto_hockey_populate::fetch_game_logs;
+// use pareto_hockey_populate::fetch_leagues;
+// use pareto_hockey_populate::fetch_players;
+// use pareto_hockey_populate::fetch_player_season;
+// use pareto_hockey_populate::fetch_team_season;
 
 // pareto-hockey-populate
 // A library to create and populate a localized SQL database of records retrieved from EliteProspects API (EP-API) endpoints.
@@ -16,7 +16,14 @@ use pareto_hockey_populate::fetch_team_season;
 async fn main() {
     println!("Loading pareto-hockey-populate...");
 
+    println!("ERASING OLD DATABASE.");
+    // pareto_hockey_populate::database::erase::erase_league().unwrap();
+    pareto_hockey_populate::database::erase::erase_team().unwrap();
+    pareto_hockey_populate::database::erase::erase_team_season().unwrap();
+    // pareto_hockey_populate::database::erase::erase_player().unwrap();
+    pareto_hockey_populate::database::erase::erase_player_season().unwrap();
 
+    println!("Erased. Connecting...");
     pareto_hockey_populate::connect_database().unwrap();
 
     println!("Connected.");
@@ -27,34 +34,13 @@ async fn main() {
 
     // (TODO: remove unwraps from demo fetches)
 
-    // populate_leagues
-    let leagues = fetch_leagues().await.unwrap();
-    dbg!(leagues.len());
-    pareto_hockey_populate::populate_leagues(leagues);
+    // // Fetch league information from EP-API
+    pareto_hockey_populate::populate::populate_leagues().await.unwrap();
 
-    
     // // Fetch player information from EP-API
-    let players = fetch_players().await.unwrap();
-    // Fetch draft selections from EP-API
-    let draft_selections = fetch_draft_selections().await.unwrap();
-    dbg!(players.len());
-    pareto_hockey_populate::populate_players(players, draft_selections);
+    pareto_hockey_populate::populate::populate_players_partial_players().await.unwrap();
+    pareto_hockey_populate::populate::populate_players_partial_draftselections().await.unwrap();
 
+    // TODO: other populate functions other than 'leagues' and 'players'
 
-    // Fetch game logs from EP-API
-    // let game_logs = fetch_game_logs().await.unwrap();
-    // dbg!(game_logs.len());
-    
-    // // Fetch player seasons from EP-API
-    let player_seasons = fetch_player_season().await.unwrap();
-    dbg!(player_seasons.len());
-    pareto_hockey_populate::populate_player_seasons(player_seasons);
-
-    // // Fetch team seasons from EP-API
-    let team_seasons = fetch_team_season().await.unwrap();
-    dbg!(team_seasons.len());
-    pareto_hockey_populate::populate_team_seasons(team_seasons);
-
-
-    // TODO: store fetched records locally.    
 }

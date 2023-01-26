@@ -8,7 +8,7 @@ use super::{player::Player};
 #[serde(rename_all (deserialize = "camelCase"))]
 pub struct DraftSelection {
     pub id : u32,
-    pub player : Option<Player>,
+    pub player : Option<Player>, // Player struct, but EPI may not send entire Player within a DraftSelection. Only use for 'id'
 
     pub year : Option<u32>,
     pub round : Option<u32>,

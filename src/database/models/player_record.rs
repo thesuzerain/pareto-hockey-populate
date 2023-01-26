@@ -5,67 +5,78 @@ use crate::models::{position::Position, draft_selection};
 // PlayerRecord
 // Pareto schema representing: 
 // - a given player
+// Unlike other records, this one is composed of two separate models from the EP-API database. 
+// A PlayerRecord can be constructed from either group, in case only some data is missing (eg: a player who never gets drafted, which is still relevant). 
 pub struct PlayerRecord {
     pub id : u32,
 
-    pub name : String,
-    pub position : Position,
+    // From models::player::Player
+    pub name : Option<String>,
+    pub position : Option<Position>,
+    pub date_of_birth : Option<String>,
 
-    pub draft_age : Option<u32>,
+    // From models::draft_selection::DraftSelection
     pub draft_year : Option<u32>,
-    pub round : Option<u32>,
-    pub overall : Option<u32>,
+    pub draft_round : Option<u32>,
+    pub draft_overall : Option<u32>,
 
-    pub date_of_birth : String
+    // From both models
+    pub draft_age : Option<u32>,
+
 }
 
 impl PlayerRecord {
-    // Converts a EP-API structured Player and a DraftSelection to a local Pareto PlayerRecord
-    pub fn from(p : crate::models::player::Player, d : Option<&crate::models::draft_selection::DraftSelection>) -> PlayerRecord {
+    // Converts a EP-API structured Player to a partial local Pareto PlayerRecord (without EP-API draft information)
+    pub fn from_partial_player(p : crate::models::player::Player) -> PlayerRecord {
 
         // If full name doesnt exist, try to recreate it from first+last
-        let name = if let Some(n) = p.name {n} else {
+        let name = Some(if let Some(n) = p.name {n} else {
             format!("{} {}", p.first_name.unwrap_or_default(), p.last_name.unwrap_or_default() )
-        };
+        });
 
-        let date_of_birth = p.date_of_birth.unwrap_or_default();
-        let birth_year = match NaiveDate::parse_from_str(&date_of_birth, "%Y-%m-%d") {
-            Ok(date) => date.year() as u32,
-            Err(_) => 0
-        };
+        let date_of_birth = Some(p.date_of_birth.unwrap_or_default());
+        let position = Some(p.position.unwrap_or(Position::None));
+    
+        PlayerRecord {
+            id: p.id,
+            name,
+            position,
+            date_of_birth,
 
-        let position = p.position.unwrap_or(Position::None);
-        
-        if let Some(d) = d {
-            
-            let draft_year = d.year.unwrap_or_default();
-            let draft_age = if draft_year > 0 && birth_year > 0 { Some(draft_year - birth_year) } else { None };
+            draft_year: None, // added by DraftSelection
+            draft_round : None, // added by DraftSelection
+            draft_overall : None, // added by DraftSelection
 
-            PlayerRecord {
-                id: p.id,
-                name,
-                position,
-                date_of_birth,
+            draft_age: None, // calculated when date_of_birth and draft_year are present
 
-                draft_age,
-                draft_year: d.year,
-                round : d.round,
-                overall : d.overall,
-            }
-        } else {
-            PlayerRecord {
-                id: p.id,
-                name,
-                position,
-                date_of_birth,
-
-                draft_age: None,
-                draft_year: None,
-                round : None,
-                overall : None,
-            }
-        }    
+        }
     }
 
+    // Converts a EP-API structured DraftSelection to a possible partial local Pareto PlayerRecord (without EP-API player information)
+    // player-id is a required field to build this, but may not be present in a DraftSelection model from the EP-API (for unknown reasons).
+    // If player.id is None, then PlayerRecord will also be None as this is not a player.
+    pub fn from_partial_draftselection(d : crate::models::draft_selection::DraftSelection) -> Option<PlayerRecord> {
+        
+        if let Some(player) = d.player {
+            Some(PlayerRecord {
+                id: player.id,
+    
+                name: None, // added by Player
+                position: None, // added by Player
+                date_of_birth: None, // added by Player
+    
+                draft_year: d.year,
+                draft_round : d.round,
+                draft_overall : d.overall,
+    
+                draft_age: None, // calculated when date_of_birth and draft_year are present
+            })
+        } else {
+            None
+        }
+
+
+    }
+    
 
 }
