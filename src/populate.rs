@@ -50,32 +50,33 @@ pub async fn populate_generic<T : DeserializeOwned, B>(
     -> rusqlite::Result<()> 
     where B : futures::Future<Output = reqwest::Result<Vec<T>>> {
 
-    let mut finished = false;
     let mut batch_offset = 0;
 
     // Loop, increasing the batch_offset until no more data is available
-    while !finished {
-
+    loop {
         // Split range of data into 'total_splits' calls to fetch_callback running simultaenously
         // Each is identifiable by index 'i' (passed to those functions as 'split_id')
-        let mut get_futures = Vec::new();
+        let mut get_futures: Vec<_> = Vec::new();
         for i in 0..total_splits {
-            let res = fetch_callback(batch_offset, i, total_splits);
-            get_futures.push(res);
+
+            let populate_batch = async move {
+                let res = fetch_callback(batch_offset, i, total_splits).await.unwrap();
+                let num_records = res.len();
+                insert_callback(res)?;
+                Ok(num_records)
+            }; 
+            get_futures.push(populate_batch);
         }
-        batch_offset += 1;
         
-        // Wait for functions to finish before insertion
-        // TODO: restructure such that the data can immediately be inserted, and move join_all to end of function 
-        let res_vec = join_all(get_futures).await;
-        
-        // Insert loaded data from each Future
-        for res in res_vec {
-            let res : Vec<T> = res.unwrap(); // TODO: abstract error, dont use unwrap
-            if res.len() != 0 { //<=
-                finished = true;
-            }
-            insert_callback(res)?;
+        // Rejoin futures together for this batch
+        let batch_results : Vec<rusqlite::Result<usize>> = join_all(get_futures).await;
+        let num_records_per_batch : rusqlite::Result<Vec<usize>>= batch_results.into_iter().collect();
+
+        // Break if any EP-API calls returned 0 results (meaning we reach the end)
+        if num_records_per_batch?.into_iter().filter(|i| *i <= 0).collect::<Vec<usize>>().len() > 0 {
+            break;
+        } else {
+            batch_offset += 1;
         }
     }
     Ok(())
