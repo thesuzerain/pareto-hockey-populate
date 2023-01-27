@@ -8,8 +8,8 @@ use super::{player::Player, team::Team, season::Season, player_season_stats::Pla
 #[serde(rename_all (deserialize = "camelCase"))]
 pub struct PlayerSeason {
     pub id : u32,
-    pub player : Player,
-    pub team : Team,
-    pub season : Season,
+    pub player : Option<Player>,
+    pub team : Option<Team>,
+    pub season : Option<Season>,
     pub regular_stats : Option<PlayerSeasonStats>
 }

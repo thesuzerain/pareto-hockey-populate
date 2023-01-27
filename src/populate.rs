@@ -37,6 +37,17 @@ pub async fn populate_players_partial_draftselections() -> rusqlite::Result<()> 
     Ok(())
 }
 
+// populate_player_season
+// Iteratively fetches all 'Player_Season' information from EP-API, converts it to LeagueRecords,
+// then stores it in local database.
+pub async fn populate_player_season() -> rusqlite::Result<()> {
+    let fetch_func = &fetch::fetch_player_season;
+    let insert_func = &database::insert::insert_player_seasons;
+
+    populate_generic(fetch_func, insert_func, 50).await?;
+    Ok(())
+}
+
 // populate_generic
 // Generic function used by populate_leagues, etc
 // Calls 'fetch_callback' to download data, 'insert_callback' to convert data to local record struct and insert it into local database. 

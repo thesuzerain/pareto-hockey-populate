@@ -8,7 +8,7 @@ use crate::rest;
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.
 // batch_offset offsets all splits by batch_offset * total_splits * MAX_REQ_LIMIT
 pub async fn fetch_player_season(batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<PlayerSeason>, reqwest::Error> {
-    Ok(fetch_generic("player-stats", Vec::new(), batch_offset, split_id, total_splits).await?)
+    Ok(fetch_generic("player-stats", vec!["sort=id"], batch_offset, split_id, total_splits).await?)
 }
 
 // Fetches Vec of all 'TeamSeason' objects from EP-API
@@ -23,7 +23,7 @@ pub async fn fetch_team_season(batch_offset : usize, split_id: usize, total_spli
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.
 // batch_offset offsets all splits by batch_offset * total_splits * MAX_REQ_LIMIT
 pub async fn fetch_game_logs(batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<GameLog>, reqwest::Error> {
-    Ok(fetch_generic("game-logs", Vec::new(), batch_offset, split_id, total_splits).await?)
+    Ok(fetch_generic("game-logs", vec!["sort=id"], batch_offset, split_id, total_splits).await?)
 }
 
 // Fetches Vec of all 'League' objects from EP-API
@@ -74,7 +74,7 @@ pub async fn fetch_generic<T : DeserializeOwned>(endpoint : &str, extra_fields :
     for field in extra_fields.iter() {
         has_updated_at = REGEX_SORT_FIELD.is_match(field) || has_updated_at;
     }
-    let sort_field = if has_updated_at { "sort=-updatedAt".to_string() } else { "".to_string() };
+    let sort_field = if !has_updated_at { "sort=-updatedAt".to_string() } else { "".to_string() };
 
     // Add limit/offset fields no matter what (as these are related to batch_offset, split_id, etc)    
     let limit_field = format!("limit={}", rest::MAX_REQ_LIMIT);   

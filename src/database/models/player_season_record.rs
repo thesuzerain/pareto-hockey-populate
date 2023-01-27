@@ -4,9 +4,9 @@
 pub struct PlayerSeasonRecord{
 
     pub id : u32,
-    pub player_id : u32,
-    pub team_id : u32,
-    pub season_start_year : u32,
+    pub player_id : Option<u32>,
+    pub team_id : Option<u32>,
+    pub season_start_year : Option<u32>,
 
     pub gp : Option<u32>,   // games played
     pub g : Option<u32>,    // goals
@@ -21,9 +21,9 @@ impl PlayerSeasonRecord {
         let stats = pss.regular_stats;
         PlayerSeasonRecord {
             id : pss.id,
-            player_id: pss.player.id,
-            team_id: pss.team.id,
-            season_start_year: pss.season.start_year,
+            player_id: if let Some(p) = pss.player { Some(p.id) } else { None },
+            team_id: if let Some(t) = pss.team { Some(t.id) } else { None },
+            season_start_year: if let Some(season) = pss.season { Some(season.start_year) } else { None },
             gp: if let Some(ref s) = stats { s.gp } else { None },
             g: if let Some(ref s) = stats { s.g } else { None },
             a: if let Some(ref s) = stats { s.a } else { None },

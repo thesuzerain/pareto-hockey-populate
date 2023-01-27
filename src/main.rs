@@ -17,7 +17,7 @@ async fn main() {
     println!("Loading pareto-hockey-populate...");
 
     println!("ERASING OLD DATABASE.");
-    // pareto_hockey_populate::database::erase::erase_league().unwrap();
+    pareto_hockey_populate::database::erase::erase_league().unwrap();
     pareto_hockey_populate::database::erase::erase_team().unwrap();
     pareto_hockey_populate::database::erase::erase_team_season().unwrap();
     // pareto_hockey_populate::database::erase::erase_player().unwrap();
@@ -35,11 +35,15 @@ async fn main() {
     // (TODO: remove unwraps from demo fetches)
 
     // // Fetch league information from EP-API
-    pareto_hockey_populate::populate::populate_leagues().await.unwrap();
+    // pareto_hockey_populate::populate::populate_leagues().await.unwrap();
+
+    // Fetch player_season information from EP-API
+    pareto_hockey_populate::populate::populate_player_season().await.unwrap();
 
     // // Fetch player information from EP-API
-    pareto_hockey_populate::populate::populate_players_partial_players().await.unwrap();
+    // pareto_hockey_populate::populate::populate_players_partial_players().await.unwrap();
     pareto_hockey_populate::populate::populate_players_partial_draftselections().await.unwrap();
+
 
     // TODO: other populate functions other than 'leagues' and 'players'
 

@@ -43,14 +43,14 @@ pub fn connect() -> rusqlite::Result<()> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS player_season
         ([id] INTEGER, 
-        [pid] INTEGER,
-        [ts_id] INTEGER, 
+        [player_id] INTEGER,
+        [team_id] INTEGER, 
         [season_start_year] INTEGER,
         [games_played] INTEGER,
         [goals] INTEGER,
         [assists] INTEGER,
         [points] INTEGER,
-        [ppg] FLOAT(3))",
+        [points_per_game] FLOAT(3))",
         [],
     )?;
 

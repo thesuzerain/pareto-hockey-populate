@@ -1,22 +1,11 @@
 use std::cmp;
 use rusqlite::{params, Connection, ToSql};
-
 use crate::models::*;
 use crate::database::models::*;
 use crate::database::connect::DATABASE_FILE_LOC;
+use crate::batch_params;
 
-
-const BATCH_MAX_SIZE : usize = 50;
-
-// Converts a set of parameters to an Vector of references that implement ToSql
-// batch_params![a,b,c]
-// => vec![&a as &dyn ToSql, &b as &dyn ToSql, &c as &dyn ToSql]
-// For use in creating an element of the values input to 'batch_insert_query' function
-macro_rules! batch_params {
-    ( $($a:expr),+) => {{
-        vec![$( &($a) as &dyn ToSql),+]
-    }};
-}
+use super::BATCH_MAX_SIZE;
 
 
 // Inserts Vec of Player information into local database 
@@ -72,7 +61,7 @@ pub fn insert_player_seasons(player_seasons: Vec<player_season::PlayerSeason>) -
     }
     
     // Insert parameters in batches
-    batch_insert_query("INSERT INTO player_team_statblock(id, player_id, team_id, sesaon_start_year, gp, g, a, pts, ppg) VALUES ", params)?;
+    batch_insert_query("INSERT INTO player_season(id, player_id, team_id, season_start_year, games_played, goals, assists, points, points_per_game) VALUES ", params)?;
     Ok(())
 }
 
@@ -141,7 +130,6 @@ pub fn insert_leagues(leagues: Vec<league::League>) -> rusqlite::Result<()>{
 //          batch_params!(record_2_v1,record_2_v2),
 //        ]
 pub fn batch_insert_query(base_query : &str, values : Vec<Vec<&dyn ToSql>>) -> rusqlite::Result<()> {
-
     // Ensure batch has at least 1 record
     let num_records = values.len();
     if num_records <= 0 {
