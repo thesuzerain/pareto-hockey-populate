@@ -159,7 +159,7 @@ pub fn batch_insert_query(base_query : &str, values : Vec<Vec<&dyn ToSql>>) -> r
     for b in 0..num_batches {
         // Get batch 'b'
         let from_ind = b*BATCH_MAX_SIZE;
-        let to_ind = cmp::max(b*BATCH_MAX_SIZE,num_records);
+        let to_ind = cmp::min((b+1)*BATCH_MAX_SIZE,num_records);
 
         // Create batch of parameters
         let batch = values[from_ind..to_ind].to_owned() ;
@@ -179,7 +179,7 @@ pub fn batch_insert_query(base_query : &str, values : Vec<Vec<&dyn ToSql>>) -> r
         let conn = Connection::open(DATABASE_FILE_LOC)?;
         let mut cached_query = conn.prepare_cached(&query_str)?;
         cached_query.execute(&*query_params)?;
+
     }
-    
     Ok(())
 }

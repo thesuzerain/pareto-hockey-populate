@@ -37,7 +37,6 @@ pub async fn populate_players_partial_draftselections() -> rusqlite::Result<()> 
     Ok(())
 }
 
-
 // populate_generic
 // Generic function used by populate_leagues, etc
 // Calls 'fetch_callback' to download data, 'insert_callback' to convert data to local record struct and insert it into local database. 
@@ -73,13 +72,12 @@ pub async fn populate_generic<T : DeserializeOwned, B>(
         // Insert loaded data from each Future
         for res in res_vec {
             let res : Vec<T> = res.unwrap(); // TODO: abstract error, dont use unwrap
-            if res.len() <= 0 {
+            if res.len() != 0 { //<=
                 finished = true;
             }
             insert_callback(res)?;
         }
     }
     Ok(())
-
 }
 
