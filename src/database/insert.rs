@@ -18,11 +18,11 @@ pub fn insert_player_partial_player(players: Vec<player::Player>) -> rusqlite::R
     // Creates parameter list from PlayerRecords for SQL insertion
     let mut params = Vec::new();
     for p in players.iter() {
-        params.push(batch_params!(p.id, p.name,  p.position, p.date_of_birth))
+        params.push(batch_params!(p.id, p.name, p.gender,  p.position, p.date_of_birth))
     }
 
     // Insert parameters in batches
-    batch_insert_query("INSERT INTO player(id, name, position, date_of_birth) VALUES ", params)?;
+    batch_insert_query("INSERT INTO player(id, name, gender, position, date_of_birth) VALUES ", params)?;
     Ok(())
 }
 
@@ -32,18 +32,19 @@ pub fn insert_player_partial_draftselection(draft_selections: Vec<draft_selectio
 
     // Converts 'DraftSelection's to 'PlayerRecord's WHERE POSSIBLE.
     // 'DraftSelection' structs that do not contain a player id are dropped
-    let conn = Connection::open(DATABASE_FILE_LOC)?;
-    let players = draft_selections.into_iter().filter_map(|d| player_record::PlayerRecord::from_partial_draftselection(d));
+    let mut conn = Connection::open(DATABASE_FILE_LOC)?;
+    let players : Vec<player_record::PlayerRecord> = draft_selections.into_iter().filter_map(|d| player_record::PlayerRecord::from_partial_draftselection(d)).collect();
 
     // Updates existing 'player' table with draft information by playerid
     // TODO
-    for p in players {
-        conn.execute(
-            "UPDATE player SET draft_age = ?2, draft_year = ?3, draft_year = ?4, draft_year = ?5 WHERE id = ?1",
-            params![p.id, p.draft_age, p.draft_year, p.draft_round, p.draft_overall],
-        )?;
+// 
+    let transaction = conn.transaction()?;
+    for p in players.iter() {
+        transaction.execute("UPDATE player SET draft_age = ?, draft_year = ?, round = ?, overall = ? WHERE id = ?", 
+        params![ p.draft_age, p.draft_year, p.draft_round, p.draft_overall, p.id])?;
     }
 
+    transaction.commit()?;
     Ok(())
 }
 
@@ -93,11 +94,11 @@ pub fn insert_team_seasons(team_seasons: Vec<team_season::TeamSeason>) -> rusqli
     // Creates parameter list from TeamSeasonRecord for SQL insertion
     let mut params = Vec::new();
     for tr in team_seasons.iter() {
-        params.push(batch_params!(tr.id, tr.team_id, tr.season_start_year, tr.group, tr.gp, tr.g, tr.a, tr.pts, tr.ppg))
+        params.push(batch_params!(tr.id, tr.team_id, tr.league_slug, tr.season_start_year, tr.group, tr.gp, tr.gf, tr.ga, tr.gd, tr.w, tr.l, tr.t, tr.pts, tr.ppg))
     }
 
     // Insert parameters in batches
-    batch_insert_query("INSERT INTO team_records(id, team_id, season_start_year, group, gp, g, a, pts, ppg) VALUES ", params)?;
+    batch_insert_query("INSERT INTO team_season(id, team_id, league_slug, season_start_year, group_name, games_played, goals_for, goals_against, goal_difference, wins, losses, ties, points, points_per_game) VALUES ", params)?;
     Ok(())
 }
 

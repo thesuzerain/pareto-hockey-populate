@@ -11,7 +11,7 @@ pub struct TeamSeason {
     pub id : u32,
     pub season : Season,
     pub team : Team,
-    pub league : League,
+    pub league : Option<League>,
     pub group : Option<String>, // a TeamSeason may also identify a specific group, if a team played in different groups for the same season
 
     pub stats : TeamSeasonStats

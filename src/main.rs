@@ -16,35 +16,35 @@
 async fn main() {
     println!("Loading pareto-hockey-populate...");
 
-    println!("ERASING OLD DATABASE.");
-    pareto_hockey_populate::database::erase::erase_league().unwrap();
-    pareto_hockey_populate::database::erase::erase_team().unwrap();
-    pareto_hockey_populate::database::erase::erase_team_season().unwrap();
-    // pareto_hockey_populate::database::erase::erase_player().unwrap();
-    pareto_hockey_populate::database::erase::erase_player_season().unwrap();
-
-    println!("Erased. Connecting...");
     pareto_hockey_populate::connect_database().unwrap();
 
-    println!("Connected.");
-
-    // TODO: create local database.
+    println!("Connected."); 
 
     // TODO: do an early check of auth key.
 
+    // TODO: Create CLI for basic population functions.
     // (TODO: remove unwraps from demo fetches)
 
-    // // Fetch league information from EP-API
-    // pareto_hockey_populate::populate::populate_leagues().await.unwrap();
+     // Fetch player information from EP-API
+     // TODO: abstract all Player into one function
+    pareto_hockey_populate::populate::populate_players_partial_players().await.unwrap();
+    pareto_hockey_populate::populate::populate_players_partial_draftselections().await.unwrap();
+    pareto_hockey_populate::database::update::update_calculate_draft_age().unwrap();
+
+    // Fetch league information from EP-API
+    pareto_hockey_populate::populate::populate_leagues().await.unwrap();
 
     // Fetch player_season information from EP-API
-    pareto_hockey_populate::populate::populate_player_season().await.unwrap();
+    pareto_hockey_populate::populate::populate_player_season_partial_stats().await.unwrap();
 
-    // // Fetch player information from EP-API
-    // pareto_hockey_populate::populate::populate_players_partial_players().await.unwrap();
-    pareto_hockey_populate::populate::populate_players_partial_draftselections().await.unwrap();
+    // Fetch team information from EP-API
+    pareto_hockey_populate::populate::populate_teams().await.unwrap();
+
+    // Fetch team season information from EP-API
+    pareto_hockey_populate::populate::populate_team_seasons().await.unwrap();
 
 
-    // TODO: other populate functions other than 'leagues' and 'players'
+
+    // TODO: other gamelogs
 
 }

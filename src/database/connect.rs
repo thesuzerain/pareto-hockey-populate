@@ -8,8 +8,9 @@ pub fn connect() -> rusqlite::Result<()> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS player
-        ([id] INTEGER, 
+        ([id] INTEGER PRIMARY_KEY, 
         [name] TEXT, 
+        [gender] VARCHAR(8),
         [position] VARCHAR(16),
         [date_of_birth] DATE, 
         [draft_age] INTEGER, 
@@ -21,28 +22,33 @@ pub fn connect() -> rusqlite::Result<()> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS team
-        ([id] INTEGER PRIMARY_KEY, [name] VARCHAR(16) PRIMARY KEY)",
+        ([id] INTEGER PRIMARY_KEY, [name] VARCHAR(16))",
         [],
     )?;
 
     conn.execute(
-        "CREATE TABLE IF NOT EXISTS team_season
-        
-        ([id] INTEGER,
-            [team_id] INTEGER,
-            [season_start_year] INTEGER,
-            [group] VARCHAR(16),
-            [games_played] INTEGER,
-            [goals] INTEGER,
-            [assists] INTEGER,
-            [points] INTEGER,
-            [ppg] FLOAT(3))",
+        "CREATE TABLE [team_season] (
+            [id]	INTEGER PRIMARY_KEY,
+            [team_id]	INTEGER,
+            [season_start_year]	INTEGER,
+            [league_slug]	VARCHAR(16),
+            [group_name]	VARCHAR(16),
+            [games_played]	INTEGER,
+            [goals_for]	INTEGER,
+            [goals_against]	INTEGER,
+            [points]	INTEGER,
+            [points_per_game]	FLOAT(3),
+            [goal_difference]	INTEGER,
+            [wins]	INTEGER,
+            [losses]	INTEGER,
+            [ties]	INTEGER
+        )",
         [],
     )?;
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS player_season
-        ([id] INTEGER, 
+        ([id] INTEGER PRIMARY_KEY, 
         [player_id] INTEGER,
         [team_id] INTEGER, 
         [season_start_year] INTEGER,

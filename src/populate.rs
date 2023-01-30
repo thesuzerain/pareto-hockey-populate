@@ -1,6 +1,6 @@
 use futures::future::join_all;
 use serde::{de::DeserializeOwned};
-use crate::{request::fetch, database};
+use crate::{request::fetch::{self}, database};
 
 // populate_leagues
 // Iteratively fetches all 'league' information from EP-API, converts it to LeagueRecords,
@@ -10,6 +10,29 @@ pub async fn populate_leagues() -> rusqlite::Result<()> {
     let insert_func = &database::insert::insert_leagues;
 
     populate_generic(fetch_func, insert_func, 3).await?;
+    Ok(())
+}
+
+// populate_teams
+// Iteratively fetches all 'team' information from EP-API, converts it to TeamRecord,
+// then stores it in local database.
+pub async fn populate_teams() -> rusqlite::Result<()> {
+    let fetch_func = &fetch::fetch_teams;
+    let insert_func = &database::insert::insert_teams;
+
+    populate_generic(fetch_func, insert_func, 10).await?;
+    Ok(())
+}
+
+
+// populate_team_season
+// Iteratively fetches all 'league' information from EP-API, converts it to LeagueRecords,
+// then stores it in local database.
+pub async fn populate_team_seasons() -> rusqlite::Result<()> {
+    let fetch_func = &fetch::fetch_team_season;
+    let insert_func = &database::insert::insert_team_seasons;
+
+    populate_generic(fetch_func, insert_func, 50).await?;
     Ok(())
 }
 
@@ -33,20 +56,53 @@ pub async fn populate_players_partial_draftselections() -> rusqlite::Result<()> 
     let fetch_func = &fetch::fetch_draft_selections;
     let insert_func = &database::insert::insert_player_partial_draftselection;
 
-    populate_generic(fetch_func, insert_func, 50).await?;
+    populate_generic(fetch_func, insert_func,50).await?;
     Ok(())
 }
 
-// populate_player_season
+// populate_player_season_partial_stats
 // Iteratively fetches all 'Player_Season' information from EP-API, converts it to LeagueRecords,
 // then stores it in local database.
-pub async fn populate_player_season() -> rusqlite::Result<()> {
+// This function only obtains the 'regularStats' obtainable from EP-API PlayerStats model, and does not obtain time-on-ice.
+pub async fn populate_player_season_partial_stats() -> rusqlite::Result<()> {
     let fetch_func = &fetch::fetch_player_season;
     let insert_func = &database::insert::insert_player_seasons;
 
     populate_generic(fetch_func, insert_func, 50).await?;
+
     Ok(())
 }
+
+// TODO: Time on ice
+// populate_player_season_partial_toi
+// Iteratively fetches all 'GameLogs' information for each EXISTING 'Player', gets the aggregate total TOI,
+// then stores it in local database.
+// This function only obtains the 'time on ice' obtainable from aggregate EP-API GameLogs model, and appends it to already-existing player_season
+// pub async fn populate_player_season_partial_toi() -> rusqlite::Result<()> {
+
+//     // TODO
+
+//     let player_id_list = database::select::select_player_ids()?;
+
+//     let mut fut_list = Vec::new();
+//     for player_id in player_id_list {
+//         let fut = async move {
+//             let game_logs = fetch_game_logs_for_player(player_id, 0, 1, 1).await?;
+//             game_logs.into_iter().fold(0, |acc, gl| acc + gl.stats);
+//             Ok(())
+//         };
+//         fut_list.push(fut);
+//     }
+
+
+
+//     // let fetch_func = &fetch::fetch_player_season;
+//     // let insert_func = &database::insert::insert_player_seasons;
+
+//     // populate_generic(fetch_func, insert_func, 50).await?;
+//     Ok(())
+// }
+
 
 // populate_generic
 // Generic function used by populate_leagues, etc

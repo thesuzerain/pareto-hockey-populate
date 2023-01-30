@@ -1,5 +1,3 @@
-use crate::models::{position::Position};
-
 // PlayerRecord
 // Pareto schema representing: 
 // - a given player
@@ -10,7 +8,8 @@ pub struct PlayerRecord {
 
     // From models::player::Player
     pub name : Option<String>,
-    pub position : Option<Position>,
+    pub gender : Option<String>,
+    pub position : Option<String>,
     pub date_of_birth : Option<String>,
 
     // From models::draft_selection::DraftSelection
@@ -33,12 +32,12 @@ impl PlayerRecord {
         });
 
         let date_of_birth = Some(p.date_of_birth.unwrap_or_default());
-        let position = Some(p.position.unwrap_or(Position::None));
     
         PlayerRecord {
             id: p.id,
             name,
-            position,
+            position: p.position,
+            gender: p.gender,
             date_of_birth,
 
             draft_year: None, // added by DraftSelection
@@ -62,7 +61,8 @@ impl PlayerRecord {
                 name: None, // added by Player
                 position: None, // added by Player
                 date_of_birth: None, // added by Player
-    
+                gender: None, // added by Player
+
                 draft_year: d.year,
                 draft_round : d.round,
                 draft_overall : d.overall,

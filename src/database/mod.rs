@@ -1,10 +1,10 @@
 pub mod models;
 
 pub mod connect;
+pub mod select;
 pub mod insert;
 pub mod update;
 pub mod erase;
-
 
 // For batch queries, how many records per batch
 const BATCH_MAX_SIZE : usize = 50;
