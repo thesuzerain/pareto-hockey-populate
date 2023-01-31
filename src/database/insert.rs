@@ -76,11 +76,11 @@ pub fn insert_teams(teams: Vec<team::Team>) -> rusqlite::Result<()>{
     // Creates parameter list from TeamRecord for SQL insertion
     let mut params = Vec::new();
     for t in teams.iter() {
-        params.push(batch_params!(t.id, t.name))
+        params.push(batch_params!(t.id, t.name, t.logo_url))
     }
     
     // Insert parameters in batches
-    batch_insert_query("INSERT INTO team(id, name) VALUES ", params)?;
+    batch_insert_query("INSERT INTO team(id, name, logo_url) VALUES ", params)?;
     Ok(())
 }
 

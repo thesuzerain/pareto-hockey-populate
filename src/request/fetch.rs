@@ -16,7 +16,7 @@ pub async fn fetch_player_season(batch_offset : usize, split_id: usize, total_sp
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.
 // batch_offset offsets all splits by batch_offset * total_splits * MAX_REQ_LIMIT
 pub async fn fetch_teams(batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<Team>, reqwest::Error> {
-    Ok(fetch_generic("teams", vec!["sort=id"], batch_offset, split_id, total_splits).await?)
+    Ok(fetch_generic("teams", vec!["sort=id","fields=id,name,logoUrl"], batch_offset, split_id, total_splits).await?)
 }
 
 // Fetches Vec of all 'TeamSeason' objects from EP-API

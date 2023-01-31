@@ -22,7 +22,7 @@ pub fn establish_schema() -> rusqlite::Result<()> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS team
-        ([id] INTEGER PRIMARY_KEY, [name] VARCHAR(16))",
+        ([id] INTEGER PRIMARY_KEY, [name] VARCHAR(16), [logo_url] TEXT)",
         [],
     )?;
 

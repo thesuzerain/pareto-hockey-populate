@@ -15,6 +15,8 @@
 #[tokio::main]
 async fn main() {
 
+    pareto_hockey_populate::database::erase::erase_team().unwrap();
+
     println!("Loading pareto-hockey-populate...");
     pareto_hockey_populate::database::connect::establish_schema().unwrap();
     println!("Connected."); 
@@ -38,7 +40,7 @@ async fn main() {
     // pareto_hockey_populate::populate::populate_player_season_partial_stats().await.unwrap();
 
     // Fetch team information from EP-API
-    // pareto_hockey_populate::populate::populate_teams().await.unwrap();
+    pareto_hockey_populate::populate::populate_teams().await.unwrap();
 
     // Fetch team season information from EP-API
     // pareto_hockey_populate::populate::populate_team_seasons().await.unwrap();

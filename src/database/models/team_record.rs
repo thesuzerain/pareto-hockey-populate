@@ -4,7 +4,8 @@
 
 pub struct TeamRecord {
     pub id : u32,
-    pub name : String
+    pub name : String,
+    pub logo_url : Option<String>
 }
 
 impl TeamRecord {
@@ -12,7 +13,8 @@ impl TeamRecord {
     pub fn from(t : crate::request::models::team::Team) -> TeamRecord {
         TeamRecord {
             id: t.id,
-            name: t.name
+            name: t.name,
+            logo_url: t.logo_url
         }
     }
 }
