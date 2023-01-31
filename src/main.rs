@@ -14,10 +14,9 @@
 // Current functionality of main.rs is to create the database from scratch and populate it from available EP-API endpoints.
 #[tokio::main]
 async fn main() {
+
     println!("Loading pareto-hockey-populate...");
-
-    pareto_hockey_populate::connect_database().unwrap();
-
+    pareto_hockey_populate::database::connect::establish_schema().unwrap();
     println!("Connected."); 
 
     // TODO: do an early check of auth key.
@@ -25,23 +24,24 @@ async fn main() {
     // TODO: Create CLI for basic population functions.
     // (TODO: remove unwraps from demo fetches)
 
+
      // Fetch player information from EP-API
      // TODO: abstract all Player into one function
-    pareto_hockey_populate::populate::populate_players_partial_players().await.unwrap();
-    pareto_hockey_populate::populate::populate_players_partial_draftselections().await.unwrap();
-    pareto_hockey_populate::database::update::update_calculate_draft_age().unwrap();
+    // pareto_hockey_populate::populate::populate_players_partial_players().await.unwrap();
+    // pareto_hockey_populate::populate::populate_players_partial_draftselections().await.unwrap();
+    // pareto_hockey_populate::database::update::update_calculate_draft_age().unwrap();
 
     // Fetch league information from EP-API
-    pareto_hockey_populate::populate::populate_leagues().await.unwrap();
+    // pareto_hockey_populate::populate::populate_leagues().await.unwrap();
 
     // Fetch player_season information from EP-API
-    pareto_hockey_populate::populate::populate_player_season_partial_stats().await.unwrap();
+    // pareto_hockey_populate::populate::populate_player_season_partial_stats().await.unwrap();
 
     // Fetch team information from EP-API
-    pareto_hockey_populate::populate::populate_teams().await.unwrap();
+    // pareto_hockey_populate::populate::populate_teams().await.unwrap();
 
     // Fetch team season information from EP-API
-    pareto_hockey_populate::populate::populate_team_seasons().await.unwrap();
+    // pareto_hockey_populate::populate::populate_team_seasons().await.unwrap();
 
 
 

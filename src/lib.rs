@@ -12,8 +12,3 @@ pub mod populate;
 
 // Auth file containing apiKey (stored locally, do not push to Git)
 pub const AUTH_FILE_LOCATION : &'static str = "auth.txt";
-
-pub fn connect_database() -> rusqlite::Result<()> {
-    database::connect::connect()
-}
-

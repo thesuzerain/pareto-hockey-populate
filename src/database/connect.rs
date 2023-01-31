@@ -2,8 +2,8 @@ use rusqlite::Connection;
 
 pub const DATABASE_FILE_LOC : &'static str = "pareto-hockey-cache.db";
 
-// Open a connection to SQLite database
-pub fn connect() -> rusqlite::Result<()> {
+// Ensure all tables are created and exist
+pub fn establish_schema() -> rusqlite::Result<()> {
     let conn = Connection::open(DATABASE_FILE_LOC)?;
 
     conn.execute(
@@ -27,7 +27,7 @@ pub fn connect() -> rusqlite::Result<()> {
     )?;
 
     conn.execute(
-        "CREATE TABLE [team_season] (
+        "CREATE TABLE IF NOT EXISTS [team_season] (
             [id]	INTEGER PRIMARY_KEY,
             [team_id]	INTEGER,
             [season_start_year]	INTEGER,

@@ -1,3 +1,5 @@
+use crate::database::models::league_tier;
+
 // League
 // Pareto schema representing: 
 // - a hockey league
@@ -10,10 +12,11 @@ pub struct LeagueRecord {
 impl LeagueRecord {
     // Converts a EP-API structured League to a local LeagueRecord
     pub fn from(l : crate::request::models::league::League) -> LeagueRecord {
+        let league_tier = league_tier::get_league_tier(&l.slug) as u32; // league 'tier' from predefined list
         LeagueRecord {
             slug: l.slug,
             name: l.name,
-            league_tier: 0 // TODO: league tiers
+            league_tier  
         }
     }
 }
