@@ -1,4 +1,4 @@
-use crate::models::team_season::TeamSeason;
+use crate::request::models::team_season::TeamSeason;
 
 
 // TeamSeason

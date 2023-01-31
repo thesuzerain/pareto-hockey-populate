@@ -9,7 +9,7 @@ pub struct LeagueRecord {
 
 impl LeagueRecord {
     // Converts a EP-API structured League to a local LeagueRecord
-    pub fn from(l : crate::models::league::League) -> LeagueRecord {
+    pub fn from(l : crate::request::models::league::League) -> LeagueRecord {
         LeagueRecord {
             slug: l.slug,
             name: l.name,

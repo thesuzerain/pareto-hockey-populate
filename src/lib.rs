@@ -1,6 +1,5 @@
 use request::rest;
 
-mod models;
 mod request;
 pub mod database;
 pub mod populate;

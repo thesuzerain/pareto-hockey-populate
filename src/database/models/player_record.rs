@@ -24,7 +24,7 @@ pub struct PlayerRecord {
 
 impl PlayerRecord {
     // Converts a EP-API structured Player to a partial local Pareto PlayerRecord (without EP-API draft information)
-    pub fn from_partial_player(p : crate::models::player::Player) -> PlayerRecord {
+    pub fn from_partial_player(p : crate::request::models::player::Player) -> PlayerRecord {
 
         // If full name doesnt exist, try to recreate it from first+last
         let name = Some(if let Some(n) = p.name {n} else {
@@ -52,7 +52,7 @@ impl PlayerRecord {
     // Converts a EP-API structured DraftSelection to a possible partial local Pareto PlayerRecord (without EP-API player information)
     // player-id is a required field to build this, but may not be present in a DraftSelection model from the EP-API (for unknown reasons).
     // If player.id is None, then PlayerRecord will also be None as this is not a player.
-    pub fn from_partial_draftselection(d : crate::models::draft_selection::DraftSelection) -> Option<PlayerRecord> {
+    pub fn from_partial_draftselection(d : crate::request::models::draft_selection::DraftSelection) -> Option<PlayerRecord> {
         
         if let Some(player) = d.player {
             Some(PlayerRecord {

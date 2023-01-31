@@ -1,6 +1,6 @@
 use std::cmp;
 use rusqlite::{params, Connection, ToSql};
-use crate::models::*;
+use crate::request::models::*;
 use crate::database::models::*;
 use crate::database::connect::DATABASE_FILE_LOC;
 use crate::batch_params;

@@ -1,7 +1,7 @@
 use serde::de::DeserializeOwned;
 use lazy_static::lazy_static;
 use regex::Regex;
-use crate::models::{draft_selection::DraftSelection, player::Player, player_season::PlayerSeason, team_season::TeamSeason, league::League, team::Team};
+use crate::request::models::{draft_selection::DraftSelection, player::Player, player_season::PlayerSeason, team_season::TeamSeason, league::League, team::Team};
 use crate::rest;
 
 // Fetches Vec of all 'PlayerSeason' objects from EP-API

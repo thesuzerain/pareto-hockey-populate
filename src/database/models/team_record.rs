@@ -9,7 +9,7 @@ pub struct TeamRecord {
 
 impl TeamRecord {
 
-    pub fn from(t : crate::models::team::Team) -> TeamRecord {
+    pub fn from(t : crate::request::models::team::Team) -> TeamRecord {
         TeamRecord {
             id: t.id,
             name: t.name

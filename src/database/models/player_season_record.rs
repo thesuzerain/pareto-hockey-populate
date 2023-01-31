@@ -17,7 +17,7 @@ pub struct PlayerSeasonRecord{
 
 impl PlayerSeasonRecord {
 
-    pub fn from(pss : crate::models::player_season::PlayerSeason) -> PlayerSeasonRecord {
+    pub fn from(pss : crate::request::models::player_season::PlayerSeason) -> PlayerSeasonRecord {
         let stats = pss.regular_stats;
         PlayerSeasonRecord {
             id : pss.id,
