@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use super::{player::Player, team::Team, season::Season, player_season_stats::PlayerSeasonStats};
+use super::{player::Player, team::Team, season::Season, player_season_stats::PlayerSeasonStats, league::League};
 
 // PlayerSeason
 // EP-API schema representing: 
@@ -10,6 +10,7 @@ pub struct PlayerSeason {
     pub id : u32,
     pub player : Option<Player>,
     pub team : Option<Team>,
+    pub league : Option<League>,
     pub season : Option<Season>,
     pub regular_stats : Option<PlayerSeasonStats>
 }

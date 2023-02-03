@@ -6,7 +6,8 @@ use crate::database::models::league_tier;
 pub struct LeagueRecord {
     pub slug : String,
     pub name : String,
-    pub league_tier : u32
+    pub league_tier : u32,
+    pub logo_url : Option<String>
 }
 
 impl LeagueRecord {
@@ -16,7 +17,8 @@ impl LeagueRecord {
         LeagueRecord {
             slug: l.slug,
             name: l.name,
-            league_tier  
+            league_tier,
+            logo_url: l.image_url
         }
     }
 }

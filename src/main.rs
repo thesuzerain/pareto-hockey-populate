@@ -1,10 +1,3 @@
-// use pareto_hockey_populate::fetch_draft_selections;
-// use pareto_hockey_populate::fetch_game_logs;
-// use pareto_hockey_populate::fetch_leagues;
-// use pareto_hockey_populate::fetch_players;
-// use pareto_hockey_populate::fetch_player_season;
-// use pareto_hockey_populate::fetch_team_season;
-
 // pareto-hockey-populate
 // A library to create and populate a localized SQL database of records retrieved from EliteProspects API (EP-API) endpoints.
 // Repeated calls to online API through available routes is extremely slow and tedious, especially for complicated requests.
@@ -15,7 +8,8 @@
 #[tokio::main]
 async fn main() {
 
-    pareto_hockey_populate::database::erase::erase_team().unwrap();
+    pareto_hockey_populate::database::erase::erase_team_season_group().unwrap();
+    // pareto_hockey_populate::database::erase::erase_league().unwrap();
 
     println!("Loading pareto-hockey-populate...");
     pareto_hockey_populate::database::connect::establish_schema().unwrap();
@@ -40,12 +34,13 @@ async fn main() {
     // pareto_hockey_populate::populate::populate_player_season_partial_stats().await.unwrap();
 
     // Fetch team information from EP-API
-    pareto_hockey_populate::populate::populate_teams().await.unwrap();
+    // pareto_hockey_populate::populate::populate_teams().await.unwrap();
 
     // Fetch team season information from EP-API
-    // pareto_hockey_populate::populate::populate_team_seasons().await.unwrap();
+    pareto_hockey_populate::populate::populate_team_season_group().await.unwrap();
 
-
+    pareto_hockey_populate::database::update::update_calculate_draft_age().unwrap();
+    pareto_hockey_populate::database::update::update_aggregate_team_season_records().unwrap();
 
     // TODO: other gamelogs
 

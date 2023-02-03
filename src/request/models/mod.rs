@@ -8,7 +8,7 @@ pub mod player_season;
 pub mod player;
 pub mod season;
 pub mod team_season_stats;
-pub mod team_season;
+pub mod team_season_group;
 pub mod team;
 
 pub mod position;

@@ -5,7 +5,7 @@ use super::connect;
 pub fn erase() -> rusqlite::Result<()> {
     erase_league()?;
     erase_team()?;
-    erase_team_season()?;
+    erase_team_season_group()?;
     erase_player()?;
     erase_player_season()?;
     Ok(())
@@ -23,9 +23,9 @@ pub fn erase_team() -> rusqlite::Result<()> {
     Ok(())
 }
 
-pub fn erase_team_season() -> rusqlite::Result<()> {
+pub fn erase_team_season_group() -> rusqlite::Result<()> {
     let conn = Connection::open(connect::DATABASE_FILE_LOC)?;
-    conn.execute("DROP TABLE IF EXISTS team_season", [])?;
+    conn.execute("DROP TABLE IF EXISTS team_season_group", [])?;
     Ok(())
 }
 

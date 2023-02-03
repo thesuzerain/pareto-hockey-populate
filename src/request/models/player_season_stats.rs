@@ -10,5 +10,4 @@ pub struct PlayerSeasonStats{
     pub g : Option<u32>,    // goals
     pub a : Option<u32>,    // assists
     pub pts : Option<u32>,  // points
-    pub ppg : Option<f32>   // average points per game
 }

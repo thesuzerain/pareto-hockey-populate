@@ -1,7 +1,7 @@
 use serde::de::DeserializeOwned;
 use lazy_static::lazy_static;
 use regex::Regex;
-use crate::request::models::{draft_selection::DraftSelection, player::Player, player_season::PlayerSeason, team_season::TeamSeason, league::League, team::Team};
+use crate::request::models::{draft_selection::DraftSelection, player::Player, player_season::PlayerSeason, team_season_group::TeamSeasonGroup, league::League, team::Team};
 use crate::rest;
 
 // Fetches Vec of all 'PlayerSeason' objects from EP-API
@@ -22,8 +22,8 @@ pub async fn fetch_teams(batch_offset : usize, split_id: usize, total_splits: us
 // Fetches Vec of all 'TeamSeason' objects from EP-API
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.
 // batch_offset offsets all splits by batch_offset * total_splits * MAX_REQ_LIMIT
-pub async fn fetch_team_season(batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<TeamSeason>, reqwest::Error> {
-    Ok(fetch_generic("team-stats", Vec::new(), batch_offset, split_id, total_splits).await?)
+pub async fn fetch_team_season_group(batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<TeamSeasonGroup>, reqwest::Error> {
+    Ok(fetch_generic("team-stats", vec!["sort=id"], batch_offset, split_id, total_splits).await?)
 }
 
 
@@ -39,7 +39,7 @@ pub async fn fetch_team_season(batch_offset : usize, split_id: usize, total_spli
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.
 // batch_offset offsets all splits by batch_offset * total_splits * MAX_REQ_LIMIT
 pub async fn fetch_leagues(batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<League>, reqwest::Error> {
-    Ok(fetch_generic("leagues", Vec::new(), batch_offset, split_id, total_splits).await?)
+    Ok(fetch_generic("leagues", vec!["fields=slug,name,imageUrl"], batch_offset, split_id, total_splits).await?)
 }
 
 // Fetches Vec of all 'Player' objects from EP-API

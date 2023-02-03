@@ -58,11 +58,11 @@ pub fn insert_player_seasons(player_seasons: Vec<player_season::PlayerSeason>) -
     // Creates parameter list from PlayerSeasonRecord for SQL insertion
     let mut params = Vec::new();
     for pss in player_seasons.iter() {
-        params.push(batch_params!(pss.id, pss.player_id, pss.team_id, pss.season_start_year, pss.gp, pss.g, pss.a, pss.pts, pss.ppg))
+        params.push(batch_params!(pss.id, pss.player_id, pss.team_id, pss.league_slug, pss.season_start_year, pss.gp, pss.g, pss.a, pss.pts))
     }
     
     // Insert parameters in batches
-    batch_insert_query("INSERT INTO player_season(id, player_id, team_id, season_start_year, games_played, goals, assists, points, points_per_game) VALUES ", params)?;
+    batch_insert_query("INSERT OR IGNORE INTO player_season(id, player_id, team_id, league_slug, season_start_year, games_played, goals, assists, points) VALUES ", params)?;
     Ok(())
 }
 
@@ -85,20 +85,20 @@ pub fn insert_teams(teams: Vec<team::Team>) -> rusqlite::Result<()>{
 }
 
 // Inserts Vec of TeamSeason information into local database 
-// Converts: EP 'TeamSeason' to Pareto 'TeamSeasonRecord'
-pub fn insert_team_seasons(team_seasons: Vec<team_season::TeamSeason>) -> rusqlite::Result<()>{
+// Converts: EP 'TeamSeason' to Pareto 'TeamSeasonGroupRecord'
+pub fn insert_team_season_group(team_season_group: Vec<team_season_group::TeamSeasonGroup>) -> rusqlite::Result<()>{
 
-    // Converts 'TeamSeason's to 'TeamSeasonRecord's
-    let team_seasons : Vec<team_season_record::TeamSeasonRecord> = team_seasons.into_iter().map(|t| team_season_record ::TeamSeasonRecord::from(t)).collect();
+    // Converts 'TeamSeason's to 'TeamSeasonGroupRecord's
+    let team_season_group : Vec<team_season_group_record::TeamSeasonGroupRecord> = team_season_group.into_iter().map(|t| team_season_group_record ::TeamSeasonGroupRecord::from(t)).collect();
 
-    // Creates parameter list from TeamSeasonRecord for SQL insertion
+    // Creates parameter list from TeamSeasonGroupRecord for SQL insertion
     let mut params = Vec::new();
-    for tr in team_seasons.iter() {
-        params.push(batch_params!(tr.id, tr.team_id, tr.league_slug, tr.season_start_year, tr.group, tr.gp, tr.gf, tr.ga, tr.gd, tr.w, tr.l, tr.t, tr.pts, tr.ppg))
+    for tr in team_season_group.iter() {
+        params.push(batch_params!(tr.id, tr.team_id, tr.league_slug, tr.season_start_year, tr.group, tr.gp, tr.gf, tr.ga, tr.gd, tr.w, tr.l, tr.t, tr.pts))
     }
 
     // Insert parameters in batches
-    batch_insert_query("INSERT INTO team_season(id, team_id, league_slug, season_start_year, group_name, games_played, goals_for, goals_against, goal_difference, wins, losses, ties, points, points_per_game) VALUES ", params)?;
+    batch_insert_query("INSERT INTO team_season_group(id, team_id, league_slug, season_start_year, group_name, games_played, goals_for, goals_against, goal_difference, wins, losses, ties, points) VALUES ", params)?;
     Ok(())
 }
 
@@ -112,11 +112,11 @@ pub fn insert_leagues(leagues: Vec<league::League>) -> rusqlite::Result<()>{
     // Creates parameter list from LeagueRecord for SQL insertion
    let mut params = Vec::new();
     for l in leagues.iter() {
-        params.push(batch_params!(l.slug, l.name, l.league_tier))
+        params.push(batch_params!(l.slug, l.name, l.league_tier, l.logo_url))
     }
 
     // Insert parameters in batches
-    batch_insert_query("INSERT INTO league(slug, name, league_tier) VALUES ", params)?;
+    batch_insert_query("INSERT INTO league(slug, name, league_tier, logo_url) VALUES ", params)?;
     Ok(())
 }
 

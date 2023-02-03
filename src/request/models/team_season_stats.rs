@@ -14,5 +14,4 @@ pub struct TeamSeasonStats {
     pub ga : Option<u32>,    // goals against
     pub pts : Option<u32>,  // points
     pub gd : Option<i32>,  // goal difference
-    pub ppg : Option<f32>   // points per game
 }

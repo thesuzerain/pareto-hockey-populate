@@ -7,7 +7,7 @@ use super::{league::League, team::Team, team_season_stats::TeamSeasonStats, seas
 // - a given team performing in a given season
 #[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone)]
 #[serde(rename_all (deserialize = "camelCase"))]
-pub struct TeamSeason {
+pub struct TeamSeasonGroup {
     pub id : u32,
     pub season : Season,
     pub team : Team,

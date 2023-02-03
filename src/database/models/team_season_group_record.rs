@@ -1,10 +1,10 @@
-use crate::request::models::team_season::TeamSeason;
+use crate::request::models::team_season_group::TeamSeasonGroup;
 
 
 // TeamSeason
 // Pareto schema representing: 
 // - a given team's performance and aggregate stats in a given season
-pub struct TeamSeasonRecord {
+pub struct TeamSeasonGroupRecord {
     pub id : u32,
 
     pub team_id : u32,
@@ -21,13 +21,12 @@ pub struct TeamSeasonRecord {
     pub ga : Option<u32>,    // goals against
     pub pts : Option<u32>,  // points
     pub gd : Option<i32>,  // goal difference
-    pub ppg : Option<f32>   // points per game
 }
 
-impl TeamSeasonRecord {
+impl TeamSeasonGroupRecord {
 
-    pub fn from(ts : TeamSeason) -> TeamSeasonRecord {
-        TeamSeasonRecord { 
+    pub fn from(ts : TeamSeasonGroup) -> TeamSeasonGroupRecord {
+        TeamSeasonGroupRecord { 
             id: ts.id,
             team_id: ts.team.id, 
             league_slug: if let Some(l) = ts.league {Some(l.slug)} else {None}, 
@@ -42,7 +41,6 @@ impl TeamSeasonRecord {
             gd: ts.stats.gd, 
 
             pts: ts.stats.pts, 
-            ppg: ts.stats.ppg 
         }
     }
 
