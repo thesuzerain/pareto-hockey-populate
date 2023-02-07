@@ -2,7 +2,7 @@
 
 Toolkit for friends in 'Pareto Hockey' project to populate database of NHL career data from EliteProspects API.
 
-### Intro
+## Intro
 
 EliteProspects is an online data aggregation and visualization service for NHL prospect and career data. 
 
@@ -12,7 +12,7 @@ However, performing certain big aggregations over their dataset can prove awkwar
 
 So to perform analysis, we temporarily cache the data in a local database (so we can query using SQL). pareto-hockey-populate creates and populates the local cache of needed relevant data.
 
-### Usage
+## Usage
 
 (Incomplete, not ready for general use)
 

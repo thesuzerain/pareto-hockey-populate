@@ -9,8 +9,8 @@ pub fn get_league_tier(league_slug : &str) -> usize {
         static ref LEAGUE_TIERS : Vec<Vec<&'static str>> = vec![
             vec!["nhl"], // tier 1 
             vec!["khl"], // tier 2
-            vec!["ahl"], // tier 3
-            vec!["czechia","shl","nla","liiga"], // tier 4
+            vec!["czechia","shl","liiga","nla"], // tier 3
+            vec!["ahl"], // tier 4
             vec!["hockeyallsvenskan","vhl","slovakia","belarus"], // tier 5
             vec!["mestis"], // tier 6
             vec!["czech2","ncaa","denmark","sl","norway","slovakia2"], // tier 7
