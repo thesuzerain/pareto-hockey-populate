@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use super::{season::Season, team::Team};
+use super::{season::Season, team::Team, league::League};
 
 // Game
 // EP-API schema representing: 
@@ -9,6 +9,6 @@ use super::{season::Season, team::Team};
 pub struct Game {
     pub id : u32,
     pub season : Season,
-    pub team : Option<Team>,
+    pub league : League,
     pub opponent : Option<Team>,
 }

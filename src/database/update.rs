@@ -7,6 +7,10 @@ use crate::database::connect::DATABASE_FILE_LOC;
 // TODO: move "update" from insert.rs into here
 
 
+// TODO: game log table should have link to  primary key of player season
+// aggregate game log stats into player seasons
+
+
 // Updates database by calculating draft age- from data already available in the database.
 // Does not add rows, but uses existing 'date_of_birth' and 'draft_year' rows. (So both Player and DraftSelection should already be inserted before running this)
 pub fn update_calculate_draft_age() -> rusqlite::Result<()> {

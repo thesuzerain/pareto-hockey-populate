@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use super::{player::Player, game_log_stats::GameLogStats, game::Game};
+use super::{player::Player, game_log_stats::GameLogStats, game::Game, team::Team};
 
 // GameLog
 // EP-API schema representing: 
@@ -9,7 +9,9 @@ use super::{player::Player, game_log_stats::GameLogStats, game::Game};
 pub struct GameLog {
     pub id : u32,
     pub game : Game,
-    pub player : Option<Player>,
+    pub player : Player,
+    pub team : Team,
+    pub opponent : Team,
     pub stats : Option<GameLogStats>,
     pub team_score : u32,
     pub opponent_score : u32,

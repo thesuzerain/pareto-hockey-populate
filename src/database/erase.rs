@@ -35,6 +35,13 @@ pub fn erase_player() -> rusqlite::Result<()> {
     Ok(())
 }
 
+pub fn erase_game_logs() -> rusqlite::Result<()> {
+    let conn = Connection::open(connect::DATABASE_FILE_LOC)?;
+    conn.execute("DROP TABLE IF EXISTS game_log", [])?;
+    Ok(())
+}
+
+
 pub fn erase_player_season() -> rusqlite::Result<()> {
     let conn = Connection::open(connect::DATABASE_FILE_LOC)?;
     conn.execute("DROP TABLE IF EXISTS player_season", [])?;

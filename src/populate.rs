@@ -1,6 +1,6 @@
 use futures::future::join_all;
 use serde::{de::DeserializeOwned};
-use crate::{request::fetch::{self}, database};
+use crate::{request::fetch, database};
 
 // populate_leagues
 // Iteratively fetches all 'league' information from EP-API, converts it to LeagueRecords,
@@ -73,35 +73,72 @@ pub async fn populate_player_season_partial_stats() -> rusqlite::Result<()> {
     Ok(())
 }
 
-// TODO: Time on ice
-// populate_player_season_partial_toi
-// Iteratively fetches all 'GameLogs' information for each EXISTING 'Player', gets the aggregate total TOI,
-// then stores it in local database.
-// This function only obtains the 'time on ice' obtainable from aggregate EP-API GameLogs model, and appends it to already-existing player_season
-// pub async fn populate_player_season_partial_toi() -> rusqlite::Result<()> {
+// populate_game_logs_for_existing_player
+// Iteratively fetches all 'GameLogs' information for each EXISTING 'Player' then stores it in local database.
+// We do NOT fetch all game logs- there are rather a lot and any unnecessary ones we don't want.
+pub async fn populate_game_logs_for_existing_player() -> rusqlite::Result<()> {
+    dbg!("pop game log");
 
-//     // TODO
+    let player_id_list = database::select::select_player_ids()?;
+    dbg!(&player_id_list.len());
 
-//     let player_id_list = database::select::select_player_ids()?;
+    let mut batch_offset = 0; 
 
-//     let mut fut_list = Vec::new();
-//     for player_id in player_id_list {
-//         let fut = async move {
-//             let game_logs = fetch_game_logs_for_player(player_id, 0, 1, 1).await?;
-//             game_logs.into_iter().fold(0, |acc, gl| acc + gl.stats);
-//             Ok(())
-//         };
-//         fut_list.push(fut);
-//     }
+    // How many players to do at a time
+    let player_splits = 200;
 
+    // Loop through 'player_split'-sized groups of players, fetching all game-logs within 
+    loop {
 
+        // Create 'player_split' many async functions that fetch game_log data, where player id is offset by batch_offset
+        let mut get_futures: Vec<_> = Vec::new();
+        for i in 0..player_splits {
 
-//     // let fetch_func = &fetch::fetch_player_season;
-//     // let insert_func = &database::insert::insert_player_seasons;
+            let player_id = player_id_list.get(batch_offset + i);
+            if let Some(player_id) = player_id {
+                // If player_id exists in database (and we havent gone past the list), create a Future for fetching and storing all its game logs
+                let populate_player_batch = async move {
+                    let fetch_func = & |batch_offset, i, total_splits| 
+                        { fetch::fetch_game_logs_for_player(*player_id, batch_offset, i, total_splits)}; 
+                    let insert_func = &database::insert::insert_game_logs;
 
-//     // populate_generic(fetch_func, insert_func, 50).await?;
-//     Ok(())
-// }
+                    // only one split for inner function, as probably less than 1000 games per player   
+                    populate_generic(fetch_func, insert_func, 1).await?;
+                    Ok::<(),rusqlite::Error>(())
+                }; 
+                // Wait for this batch of futures to finish
+                get_futures.push(populate_player_batch);
+            }
+        }
+        
+        let batch_results : Vec<Result<(),rusqlite::Error>> = join_all(get_futures).await;
+        let batch_results : Result<Vec<()>,rusqlite::Error> = batch_results.into_iter().collect();
+        let _ = batch_results?;
+
+        // Increment batch offset, and exit loop if done
+        batch_offset += player_splits;
+        if batch_offset > player_id_list.len() {
+            break;
+        }
+        
+        
+
+    }
+    Ok(())
+}
+
+    // Iterate over the list of players
+    // *One player is done at a time*. Thread splitting is done inside a player
+    // // This allows easy resuming of the task if it gets interrupted + simplicity (while not hindering speed).
+    // for player_id in player_id_list {
+    //     let fetch_func = & |batch_offset, i, total_splits| 
+    //         { fetch::fetch_game_logs_for_player(player_id, batch_offset, i, total_splits)}; 
+    //     let insert_func = &database::insert::insert_game_logs;
+
+    //     populate_generic(fetch_func, insert_func, 1).await?; // one split inside, as probably less than 1000 games per player
+    // }
+    // Ok(())
+
 
 
 // populate_generic
@@ -117,7 +154,7 @@ pub async fn populate_generic<T : DeserializeOwned, B>(
     -> rusqlite::Result<()> 
     where B : futures::Future<Output = reqwest::Result<Vec<T>>> {
 
-    let mut batch_offset = 0; // TODO should be 0
+    let mut batch_offset = 0;
 
     // Loop, increasing the batch_offset until no more data is available
     loop { // todo: could be a 'while'
@@ -129,7 +166,10 @@ pub async fn populate_generic<T : DeserializeOwned, B>(
             let populate_batch = async move {
                 let res = fetch_callback(batch_offset, i, total_splits).await.unwrap();
                 let num_records = res.len();
-                insert_callback(res)?;
+
+                if num_records > 0 {
+                    insert_callback(res)?;
+                }
                 Ok(num_records)
             }; 
             get_futures.push(populate_batch);

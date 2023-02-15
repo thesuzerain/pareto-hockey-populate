@@ -5,3 +5,6 @@ auth.txt
 
 # Locally stored database
 pareto-hockey-cache.db
+
+# local changelog 
+changelog.txt

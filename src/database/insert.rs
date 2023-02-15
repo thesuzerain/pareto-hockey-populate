@@ -66,6 +66,27 @@ pub fn insert_player_seasons(player_seasons: Vec<player_season::PlayerSeason>) -
     Ok(())
 }
 
+// Inserts Vec of GameLog information into local database 
+// Converts: EP 'GameLog' to Pareto 'GameLogRecord'
+pub fn insert_game_logs(game_logs: Vec<game_log::GameLog>) -> rusqlite::Result<()>{
+
+    // Converts 'GameLog's to 'GameLogRecord's
+    let game_logs : Vec<game_log_record::GameLogRecord> = game_logs.into_iter().filter_map(|gl| game_log_record::GameLogRecord::from(gl)).collect();
+    
+    println!("printing {}",game_logs.len());
+
+    // Creates parameter list from PlayerSeasonRecord for SQL insertion
+    let mut params = Vec::new();
+    for glr in game_logs.iter() {
+        params.push(batch_params!(glr.id, glr.player_id, glr.team_id, glr.league_slug, glr.season_start_year, glr.oppteam_id, glr.g, glr.a, glr.toi_secs))
+    }
+    
+    // Insert parameters in batches
+    batch_insert_query("INSERT OR IGNORE INTO game_log(id, player_id, team_id, league_slug, season_start_year, opp_team_id, goals_scored, assists, time_on_ice_secs) VALUES ", params)?;
+    Ok(())
+}
+
+
 // Inserts Vec of Team information into local database 
 // Converts: EP 'Team' to Pareto 'TeamRecord'
 pub fn insert_teams(teams: Vec<team::Team>) -> rusqlite::Result<()>{

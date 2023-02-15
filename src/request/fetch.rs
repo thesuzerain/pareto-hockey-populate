@@ -4,6 +4,8 @@ use regex::Regex;
 use crate::request::models::{draft_selection::DraftSelection, player::Player, player_season::PlayerSeason, team_season_group::TeamSeasonGroup, league::League, team::Team};
 use crate::rest;
 
+use super::models::game_log::GameLog;
+
 // Fetches Vec of all 'PlayerSeason' objects from EP-API
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.
 // batch_offset offsets all splits by batch_offset * total_splits * MAX_REQ_LIMIT
@@ -31,9 +33,9 @@ pub async fn fetch_team_season_group(batch_offset : usize, split_id: usize, tota
 // Fetches Vec of all 'GameLog' objects from EP-API from a *certain player*
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.
 // batch_offset offsets all splits by batch_offset * total_splits * MAX_REQ_LIMIT
-// pub async fn fetch_game_logs_for_player(player_id : u32, batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<GameLog>, reqwest::Error> {
-//     Ok(fetch_generic(&format!("players/{player_id}/game-logs"), vec!["sort=id"], batch_offset, split_id, total_splits).await?)
-// }
+pub async fn fetch_game_logs_for_player(player_id : u32, batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<GameLog>, reqwest::Error> {
+    Ok(fetch_generic(&format!("game-logs"), vec!["fields=id,game,stats,team,opponent,player,stats,teamScore,opponentScore","sort=game.date",&format!("player={player_id}")], batch_offset, split_id, total_splits).await?)
+}
 
 // Fetches Vec of all 'League' objects from EP-API
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.

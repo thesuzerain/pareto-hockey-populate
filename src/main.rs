@@ -8,8 +8,9 @@
 #[tokio::main]
 async fn main() {
 
-    pareto_hockey_populate::database::erase::erase_team_season_group().unwrap();
+    // pareto_hockey_populate::database::erase::erase_team_season_group().unwrap();
     // pareto_hockey_populate::database::erase::erase_league().unwrap();
+    pareto_hockey_populate::database::erase::erase_game_logs().unwrap();
 
     println!("Loading pareto-hockey-populate...");
     pareto_hockey_populate::database::connect::establish_schema().unwrap();
@@ -37,11 +38,15 @@ async fn main() {
     // pareto_hockey_populate::populate::populate_teams().await.unwrap();
 
     // Fetch team season information from EP-API
-    pareto_hockey_populate::populate::populate_team_season_group().await.unwrap();
+    // pareto_hockey_populate::populate::populate_team_season_group().await.unwrap();
+
+    // Fetch game log information
+    pareto_hockey_populate::populate::populate_game_logs_for_existing_player().await.unwrap();
+
 
     pareto_hockey_populate::database::update::update_calculate_draft_age().unwrap();
     pareto_hockey_populate::database::update::update_aggregate_team_season_records().unwrap();
 
-    // TODO: other gamelogs
+    // TODO: other updates
 
 }
