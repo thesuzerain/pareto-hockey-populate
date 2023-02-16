@@ -86,24 +86,16 @@ pub async fn populate_player_season_partial_stats() -> Result<(), PopulateError>
 // We do NOT fetch all game logs- there are rather a lot and any unnecessary ones we don't want.
 // TODO: this uses essentially the same logic to batch poulation below: can we abstract?
 pub async fn populate_game_logs_for_existing_player() -> Result<(), PopulateError> {
-    dbg!("pop game log");
 
     let player_id_list = database::select::select_player_ids()?;
-    dbg!(&player_id_list.len());
-
-    let mut batch_offset = 249874   ; 
+    let mut batch_offset = 0   ; 
 
     // How many players to do at a time
     let player_splits = 50;
 
     // Loop through 'player_split'-sized groups of players, fetching all game-logs within 
     loop {
-
-        println!( " hello " );
-        thread::sleep( Duration::from_millis( 30 ) );
-    
-        println!("{batch_offset}");
-        // Create 'player_split' many async functions that fetch game_log data, where player id is offset by batch_offset
+            // Create 'player_split' many async functions that fetch game_log data, where player id is offset by batch_offset
         let mut get_futures: Vec<_> = Vec::new();
         for i in 0..player_splits {
 
@@ -133,9 +125,6 @@ pub async fn populate_game_logs_for_existing_player() -> Result<(), PopulateErro
         if batch_offset > player_id_list.len() {
             break;
         }
-        
-        
-
     }
     Ok(())
 }
