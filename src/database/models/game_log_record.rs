@@ -19,9 +19,9 @@ pub struct GameLogRecord{
 
     pub oppteam_id : u32, 
 
-    pub g : Option<u32>,    // goals
-    pub a : Option<u32>,    // assists
-    pub toi_secs : Option<u32>, // time on ice
+    pub g : Option<i32>,    // goals
+    pub a : Option<i32>,    // assists
+    pub toi_secs : Option<i32>, // time on ice
 
     pub team_score : u32,
     pub opp_score : u32
@@ -61,7 +61,7 @@ impl GameLogRecord {
     // Gets time-on-ice clocck string (H:M:S) as a u32 of seconds
     // Currently returns a Result as it attempts to match to Regex.
     // (Result currently not handled as and game log simply dropped, but may be in the future for debugging)
-    fn get_toi_as_secs(toi : &str) -> Result<u32,regex::Error> {
+    fn get_toi_as_secs(toi : &str) -> Result<i32,regex::Error> {
         lazy_static ! {
             // Match a wide array of clock syntaxes, which could be H:M:S in many ways:
             // 1:23:33
@@ -74,9 +74,9 @@ impl GameLogRecord {
         let caps = CLOCK_REGEX.captures(&toi).ok_or_else(toi_error)?;
 
         // unwrap parsed values, as if they exist they are guaranteed to be \d
-        let hours : u32 = if let Some(h) = caps.get(1) {h.as_str().parse().unwrap()} else { 0 };  
-        let minutes : u32 = caps.get(2).ok_or_else(toi_error)?.as_str().parse().unwrap();
-        let seconds : u32 = caps.get(3).ok_or_else(toi_error)?.as_str().parse().unwrap();
+        let hours : i32 = if let Some(h) = caps.get(1) {h.as_str().parse().unwrap()} else { 0 };  
+        let minutes : i32 = caps.get(2).ok_or_else(toi_error)?.as_str().parse().unwrap();
+        let seconds : i32 = caps.get(3).ok_or_else(toi_error)?.as_str().parse().unwrap();
 
         Ok(hours * 3600 + minutes * 60 + seconds )
     }

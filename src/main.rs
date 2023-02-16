@@ -10,7 +10,7 @@ async fn main() {
 
     // pareto_hockey_populate::database::erase::erase_team_season_group().unwrap();
     // pareto_hockey_populate::database::erase::erase_league().unwrap();
-    pareto_hockey_populate::database::erase::erase_game_logs().unwrap();
+    // pareto_hockey_populate::database::erase::erase_game_logs().unwrap();
 
     println!("Loading pareto-hockey-populate...");
     pareto_hockey_populate::database::connect::establish_schema().unwrap();

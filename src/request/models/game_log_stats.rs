@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize,PartialEq, PartialOrd, Clone, Debug)]
 #[serde(rename_all (deserialize = "UPPERCASE"))]
 pub struct GameLogStats{
-    pub g : Option<u32>,    // goals
-    pub a : Option<u32>,    // assists
+    pub g : Option<i32>,    // goals
+    pub a : Option<i32>,    // assists
     pub toi : Option<String> // time on ice
 }

@@ -49,7 +49,7 @@ pub fn establish_schema() -> rusqlite::Result<()> {
         [],
     )?;
 
-    conn.execute("CREATE TABLE [game_log] (
+    conn.execute("CREATE TABLE IF NOT EXISTS [game_log] (
         [id]	INTEGER,
         [player_id]	INTEGER,
         [team_id]	INTEGER,

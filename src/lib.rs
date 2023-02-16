@@ -1,3 +1,5 @@
+use thiserror::Error;
+
 use request::rest;
 
 mod request;
@@ -12,3 +14,12 @@ pub mod populate;
 
 // Auth file containing apiKey (stored locally, do not push to Git)
 pub const AUTH_FILE_LOCATION : &'static str = "auth.txt";
+
+#[derive(Error, Debug)]
+pub enum PopulateError {
+    #[error("Error while accessing HTTP endpoint: {0}")]
+    Http(#[from] reqwest::Error),
+
+    #[error("Error while interacting with the database: {0}")]
+    Database(#[from] rusqlite::Error)
+}
