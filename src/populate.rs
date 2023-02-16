@@ -2,8 +2,6 @@ use futures::future::join_all;
 use reqwest::StatusCode;
 use serde::{de::DeserializeOwned};
 use crate::{request::fetch, database, PopulateError};
-use std::time::Duration;
-use std::thread;
 
 
 // Number of consecutive times to populating a batch when a 504 GATEWAY TIMEOUT is returned
