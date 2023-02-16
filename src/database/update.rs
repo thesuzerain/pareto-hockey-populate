@@ -52,6 +52,20 @@ pub fn update_aggregate_team_season_records() -> rusqlite::Result<()> {
 }
 
 
+// Creates artificial 'team_season' records for where player_seasons do not have a corresponding team_season
+// These records are marked with 'team_season.artificial = 1'
+// They may not be exhaustive: an artificial team season may not have the 'real' number of player_seasons that compose it if such records are missing.
+pub fn update_missing_team_seasons() -> rusqlite::Result<()> {
+    let conn = Connection::open(DATABASE_FILE_LOC)?;
+
+    conn.execute("DELETE FROM team_season WHERE artificial = 1", [])?;
+
+    conn.execute("INSERT INTO team_season (team_id, league_slug, season_start_year, games_played, goals_for, points, artificial) 
+        SELECT team_id, league_slug, season_start_year, SUM(player_season.games_played), SUM(player_season.goals), SUM(player_season.points), 1    FROM player_season WHERE team_season_id IS NULL and team_id IS NOT NULL and league_slug IS NOT NULL and season_start_year IS NOT NULL GROUP BY team_id, league_slug, season_start_year
+    ", [])?;
+
+    Ok(())
+}
 // Updates PlayerSeasonRecord by adding a FK reference to the TeamSeasonGroupRecord table corresponding to the team's stat record for a given player-season-team combo.
 // pub fn update_reference_team_season_id() -> rusqlite::Result<()> {
 

@@ -86,7 +86,7 @@ pub async fn populate_player_season_partial_stats() -> Result<(), PopulateError>
 pub async fn populate_game_logs_for_existing_player() -> Result<(), PopulateError> {
 
     let player_id_list = database::select::select_player_ids()?;
-    let mut batch_offset = 0   ; 
+    let mut batch_offset = 0; 
 
     // How many players to do at a time
     let player_splits = 50;
