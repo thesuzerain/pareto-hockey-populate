@@ -25,7 +25,7 @@ pub async fn fetch_teams(batch_offset : usize, split_id: usize, total_splits: us
 // Multiple ('total_splits') instances of this can be run asynchronously, where split_id uniquely identifies this split.
 // batch_offset offsets all splits by batch_offset * total_splits * MAX_REQ_LIMIT
 pub async fn fetch_team_season_group(batch_offset : usize, split_id: usize, total_splits: usize) -> Result<Vec<TeamSeasonGroup>, reqwest::Error> {
-    Ok(fetch_generic("team-stats", vec!["sort=id"], batch_offset, split_id, total_splits).await?)
+    Ok(fetch_generic("team-stats", vec!["sort=id","fields=id,season,team.id,team.name,league,group,stats"], batch_offset, split_id, total_splits).await?)
 }
 
 

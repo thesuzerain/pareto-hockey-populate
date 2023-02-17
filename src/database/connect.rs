@@ -45,6 +45,7 @@ pub fn establish_schema() -> rusqlite::Result<()> {
             [losses]	INTEGER,
             [ties]	INTEGER,
             [artificial] INTEGER,
+            [artificial_games_played_sum] INTEGER,
             PRIMARY KEY(id)
         )",
         [],
@@ -52,6 +53,7 @@ pub fn establish_schema() -> rusqlite::Result<()> {
 
     conn.execute("CREATE TABLE IF NOT EXISTS [game_log] (
         [id]	INTEGER,
+        [player_season_id]	INTEGER,
         [player_id]	INTEGER,
         [team_id]	INTEGER,
         [season_start_year]	YEAR,

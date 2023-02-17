@@ -41,12 +41,11 @@ async fn main() {
     // pareto_hockey_populate::populate::populate_team_season_group().await.unwrap();
 
     // Fetch game log information
-    pareto_hockey_populate::populate::populate_game_logs_for_existing_player().await.unwrap();
+    // pareto_hockey_populate::populate::populate_game_logs_for_existing_player().await.unwrap();
 
 
-    pareto_hockey_populate::database::update::update_calculate_draft_age().unwrap();
-    pareto_hockey_populate::database::update::update_aggregate_team_season_records().unwrap();
-
+    pareto_hockey_populate::database::update::all_updates().unwrap();
+    
     // TODO: other updates
 
 }
