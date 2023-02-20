@@ -76,10 +76,10 @@ pub fn update_artificial_team_seasons() -> rusqlite::Result<()> {
     let conn = Connection::open(DATABASE_FILE_LOC)?;
 
     conn.execute("DELETE FROM team_season WHERE artificial = 2", [])?;
-    conn.execute("UPDATE team_season SET games_played = NULL, goals_for = NULL, points = NULL, artificial_player_season_sum = 0 WHERE artificial = 1", [])?;
+    conn.execute("UPDATE team_season SET games_played = NULL, goals_for = NULL, points = NULL, artificial_players_with_games_used = 0 WHERE artificial = 1", [])?;
 
     // Create new artificial team_seasons (artificial = 2) for player_seasons that do not have corresponding team_seasons
-    conn.execute("INSERT INTO team_season (team_id, league_slug, season_start_year, games_played, goals_for, points, artificial, artificial_player_season_sum) 
+    conn.execute("INSERT INTO team_season (team_id, league_slug, season_start_year, games_played, goals_for, points, artificial, artificial_players_with_games_used) 
         SELECT team_id, league_slug, season_start_year, MAX(player_season.games_played), SUM(player_season.goals), SUM(player_season.points), 2, COUNT(player_season.games_played)
         FROM player_season WHERE team_season_id IS NULL and team_id IS NOT NULL and league_slug IS NOT NULL and season_start_year IS NOT NULL
         GROUP BY team_id, league_slug, season_start_year;
@@ -87,13 +87,27 @@ pub fn update_artificial_team_seasons() -> rusqlite::Result<()> {
 
     // Update team_seasons (artificial = 1) artificially for team_seasons where the games_played and goals_for are NULL, when
     // there are player_seasons that could have those values.
-    conn.execute("UPDATE team_season SET games_played = gp, goals_for = gf, points = pts, artificial_player_season_sum = apss, artificial = 1 FROM 
+    conn.execute("UPDATE team_season SET games_played = gp, goals_for = gf, points = pts, artificial_players_with_games_used = apss, artificial = 1 FROM 
     (SELECT MAX(games_played) as gp, SUM(goals) as gf, SUM(points) as pts, COUNT(id) as apss, league_slug, team_id, season_start_year FROM player_season
     GROUP BY league_slug, team_id, season_start_year) as ps
     WHERE team_season.league_slug = ps.league_slug and team_season.team_id = ps.team_id and team_season.season_start_year = ps.season_start_year
-    AND team_season.games_played IS NULL AND gp IS NOT NULL;
+    AND (team_season.games_played IS NULL OR team_season.goals_for IS NULL) AND gp IS NOT NULL;
+
     ", [])?;
 
+    // Adds team_season_groupid to 'player_season' and 'team_season_group'
+    // NOTE: this is a duplicate of queries in 'update_aggregate_team_season_records'
+    conn.execute("UPDATE player_season SET team_season_id = NULL",[])?;
+    conn.execute("UPDATE player_season SET team_season_id = team_season.id FROM team_season 
+    WHERE player_season.team_id=team_season.team_id 
+        and player_season.league_slug=team_season.league_slug 
+        and player_season.season_start_year=team_season.season_start_year
+    ", [])?;
+    conn.execute("UPDATE team_season_group SET team_season_id = team_season.id FROM team_season 
+    WHERE team_season_group.team_id=team_season.team_id 
+        and team_season_group.league_slug=team_season.league_slug 
+        and team_season_group.season_start_year=team_season.season_start_year
+    ", [])?;
 
 
     Ok(())

@@ -45,7 +45,7 @@ pub fn establish_schema() -> rusqlite::Result<()> {
             [losses]	INTEGER,
             [ties]	INTEGER,
             [artificial] INTEGER,
-            [artificial_games_played_sum] INTEGER,
+            [artificial_players_with_games_used] INTEGER,
             PRIMARY KEY(id)
         )",
         [],
